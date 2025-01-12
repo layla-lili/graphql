@@ -4,6 +4,8 @@ import { AuthProvider } from "@/context/authContext";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { Metadata } from "next";
 import "./globals.css";
+import StarryBackground from "@/components/staryNight";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,7 +31,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased `} >
+    
         <AuthProvider>
           <ApolloWrapper context={context}>
             <ThemeProvider
@@ -38,8 +41,10 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      
+              <div className="md:container md:mx-auto">
                 <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+          
                   {children}
                 </main>
               </div>

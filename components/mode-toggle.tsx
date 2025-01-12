@@ -11,12 +11,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useEffect } from "react"
 
 export  default function ModeToggle() {
-  const { setTheme } = useTheme()
+  const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    if (theme === "linear-gradient") {
+      // Apply the gradient background when system theme is selected
+      document.documentElement.classList.add("bg-gradient-bg")
+    } else {
+      // Remove the gradient when it's not system theme
+      document.documentElement.classList.remove("bg-gradient-bg")
+    }
+  }, [theme])
 
   return (
-    <DropdownMenu>
+    <DropdownMenu  >
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
           <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -31,8 +42,8 @@ export  default function ModeToggle() {
         <DropdownMenuItem onClick={() => setTheme("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
-          System
+        <DropdownMenuItem onClick={() => setTheme("linear-gradient")}>
+        Linear-Gradient
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

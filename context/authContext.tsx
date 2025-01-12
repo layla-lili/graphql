@@ -17,30 +17,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setTokenState] = useState<string | null>(null);
   const [decodedToken, setDecodedToken] = useState<any>(null);
 
-  // Save token to cookies if it changes
+  // Single useEffect to handle token initialization and updates
   useEffect(() => {
-    console.log("Token has changed in context:", token); // Log the token when it changes
-    if (token) {
-      // Save to cookies or localStorage as needed
-      document.cookie = `JWT=${token}; Path=/; Secure; SameSite=Strict; Expires=${new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString()}`;
-    } else {
-      console.log("No token to save");
+    const getTokenFromCookie = () => {
+      return document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("JWT="))
+        ?.split("=")[1] || null;
+    };
+
+    // Initialize token from cookie
+    const savedToken = getTokenFromCookie();
+    if (savedToken && !token) {
+      setTokenState(savedToken);
     }
-  }, [token]);
+  }, []); // Only run on mount
 
-  const setToken = (token: string | null) => {
-    console.log("Setting token in AuthContext:", token); // Log when setting the token
-    setTokenState(token);
+  const setToken = (newToken: string | null) => {
+    console.log("Setting token in AuthContext:", newToken);
+    if (newToken) {
+      // Save to cookie when token is set
+      const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString();
+      document.cookie = `JWT=${newToken}; Path=/; Secure; SameSite=Strict; Expires=${expiration}`;
+    } else {
+      // Clear cookie when token is null
+      document.cookie = "JWT=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    }
+    setTokenState(newToken);
   };
-
-  useEffect(() => {
-    const savedToken = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("JWT="))
-      ?.split("=")[1];
-    console.log("Token loaded from cookies:", savedToken); // Log token loading from cookies
-    setToken(savedToken || null);
-  }, []); // On mount, try loading the token from cookies
 
   const clearToken = () => {
     setTokenState(null);
@@ -63,3 +67,6 @@ export const useAuth = (): AuthContextType => {
   console.log("AuthContext:", context); // Log the entire context to see the token state
   return context;
 };
+
+
+

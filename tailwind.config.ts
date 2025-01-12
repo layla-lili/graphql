@@ -55,8 +55,43 @@ export default {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
   			sm: 'calc(var(--radius) - 4px)'
-  		}
-  	}
+  		},
+  		keyframes: {
+  			marquee: {
+  				from: {
+  					transform: 'translateX(0)'
+  				},
+  				to: {
+  					transform: 'translateX(calc(-100% - var(--gap)))'
+  				}
+  			},
+  			'marquee-vertical': {
+  				from: {
+  					transform: 'translateY(0)'
+  				},
+  				to: {
+  					transform: 'translateY(calc(-100% - var(--gap)))'
+  				}
+  			}
+  		},
+  		animation: {
+  			marquee: 'marquee var(--duration) infinite linear',
+  			'marquee-vertical': 'marquee-vertical var(--duration) linear infinite'
+  		},
+		  backgroundImage: {
+			'gradient-bg': 'linear-gradient(to right, #291e52, #541853)'  // Custom gradient example
+		  }
+		  
+  	},
+	  container: {
+		padding: {
+		  DEFAULT: '1rem',
+		  sm: '2rem',
+		  lg: '4rem',
+		  xl: '5rem',
+		  '2xl': '6rem',
+		},
+	  },
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

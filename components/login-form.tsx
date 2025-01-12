@@ -49,17 +49,11 @@ export default function LoginForm({
 
       // Check if the response contains a token
       if (response.status === 200) {
-        const token = response.data; // Adjust this based on actual response structure
-        console.log("Token:", token);
+        const token = response.data;
         if (token) {
-          // Set token in cookies with expiration (1 hour example)
-          const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString();
-          document.cookie = `JWT=${token}; Path=/; Secure; SameSite=Strict; Expires=${expiration}`;
-
-          setToken(token); // Set token using context
-
-          // Redirect to home page or any other page
-          router.push("/"); // Redirect to the homepage after successful login
+          setToken(token); // This will handle both state and cookie storage
+          localStorage.setItem("JWT", token); // Save token in localStorage
+          router.push("/");
         } else {
           throw new Error("Token not found in response");
         }
@@ -73,7 +67,7 @@ export default function LoginForm({
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6 w-1/2 ", className)} {...props}>
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>

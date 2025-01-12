@@ -1,28 +1,49 @@
-//app/app.tsx
-"use client"
-import ModeToggle from '@/components/mode-toggle';
-import ResultComponent from '@/components/ResultComponent';
+"use client";
+
+
+import SkillsInfo from "@/components/SkillsInfo";
+import UserInfo from "@/components/UserInfo";
+import SparklesText from "@/components/ui/sparkles-text";
+import { MarqueeDemo } from "@/components/ui/Footer";
+import Navbar from "@/components/Navbar";
+import ModeToggle from "@/components/mode-toggle";
+import ApexProgressLineChart from "@/components/graphs/RechartProgressLineChart";
+import SucessFailureRadialStackedChart from "@/components/graphs/SucessFailureRadialStackedChart";
+import SkillsPieChart from "@/components/graphs/SkillsPieChart";
+import LevelGrandBarChart from "@/components/graphs/LevelGrandBarChart";
+
 
 
 export default function Home() {
-
   return (
+    <>
 
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <ModeToggle />
-
-     <div>
-      <h1>Welcome to the Dashboard</h1>
-  <ResultComponent />
-    </div>
-
-      
+     <main className="grid grid-cols-1 gap-4 p-4 items-center justify-items-center w-full ">
+      <Navbar />
+  
+        <div className="px-4 py-8">
+          <SparklesText text="😎Welcome, Visionary" />
+          <SparklesText text="Full-Stack Engineer!😎" />
+        
+        </div>
+        <div>
+        <div >
+          <UserInfo />
+        </div>
+        {/* graphs section */}
+        <div className="container grid grid-cols-1 gap-10">
+          <SkillsInfo />
+         <ApexProgressLineChart />
+         <SucessFailureRadialStackedChart />
+         <SkillsPieChart />
+         <LevelGrandBarChart />
+       
+        </div>
+        </div>
       </main>
-      {/* <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-      </footer> */}
-    </div>
-
-   
+      <div className="w-full overflow-hidden">
+        <MarqueeDemo />
+      </div>
+    </>
   );
 }

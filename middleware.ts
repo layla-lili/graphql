@@ -8,7 +8,9 @@ export function middleware(req: NextRequest) {
   // console.log("Middleware is running", req);
   // Check if the token is present in cookies
   const token = req.cookies.get("JWT");
-  console.log("Token from middleware:", token);  // Check if the token is being captured
+
+
+  // console.log("Token from middleware:", token);  // Check if the token is being captured
 
   // If no token exists, redirect to the login page
   if (!token) {

@@ -1,8 +1,24 @@
 import { gql } from "@apollo/client";
 
 export const USER_INFO = gql`
-  query User {
-    user {
+ query rootEventDetails($userId: Int!, $rootEventId: Int!) {
+    xp: transaction_aggregate(
+      where: {
+        userId: { _eq: $userId }
+        type: { _eq: "xp" }
+        eventId: { _eq: $rootEventId }
+      }
+    ) { aggregate { sum { amount } } }
+    level: transaction(
+      limit: 1
+      order_by: { amount: desc }
+      where: {
+        userId: { _eq: $userId }
+        type: { _eq: "level" }
+        eventId: { _eq: $rootEventId }
+      }
+    ) { amount }
+       user {
       id
       login
       auditRatio
@@ -21,6 +37,48 @@ export const SKILLS = gql`
       amount
       type
       objectId
+    }
+  }
+`;
+
+export const ALL_USERS_LEVEL = gql`
+ query  {
+       event_user(where: { eventId: { _in: [72, 20, 250] } }) {
+      level
+      userId
+      userLogin
+      eventId
+  }
+
+  }
+`;
+
+export const XP_LEVEL = gql`
+query rootEventDetails($userId: Int!, $rootEventId: Int!) {
+    xp: transaction_aggregate(
+      where: {
+        userId: { _eq: $userId }
+        type: { _eq: "xp" }
+        eventId: { _eq: $rootEventId }
+      }
+    ) { aggregate { sum { amount } } }
+    level: transaction(
+      limit: 1
+      order_by: { amount: desc }
+      where: {
+        userId: { _eq: $userId }
+        type: { _eq: "level" }
+        eventId: { _eq: $rootEventId }
+      }
+    ) { amount }
+       user {
+      id
+      login
+      auditRatio
+      campus
+      firstName
+      lastName
+      email
     }
   }
 `;
@@ -48,69 +106,111 @@ export const PROGRESS = gql`
 
 `;
 
+//$userId  => login user id
+// $selectedEventId => event id
+// $rootEventId grand parent event id  eventId: { _in: [72, 20, 250] }
+//TODO
+const USER_PROGRESS = gql`
+query progress($userId: Int!, $selectedEventId: Int!, $rootEventId: Int!) {
+    progress (
+      order_by: [{ path: asc} , {createdAt: asc}, {grade: asc }]
+      where: {
+        userId: { _eq: $userId }
+        _or: [
+          { eventId: { _eq: $selectedEventId} },
+          { event: { parentId: { _eq: $selectedEventId } } },
+          {
+            event: {
+              object: { type: { _eq: "module" } }
+              children: { id: { _eq: $selectedEventId } }
+            }
+          },
+          {
+            _and: [
+              { object: { type: { _eq: "piscine" } } }
+              {
+                event: {
+                  parent: { object: { type: { _eq: "module" } } }
+                  parentId: { _eq: $rootEventId }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ) {
+      id
+      path
+      grade
+      isDone
+      eventId
+      version
+      createdAt
+      updatedAt
+    }
+  }`;
 
-
-export const PASSFAILCOUNT = gql`
-query {
-  pass: result_aggregate(where: { grade: { _gte: 1 } }) {
+export const USER_PASSFAILCOUNT = gql`
+query GetAuditCounts($auditorId: Int!) {
+  passCount: audit_aggregate(
+    where: {
+      group: { campus: { _eq: "bahrain" } },
+      auditorId: { _eq: $auditorId },
+      private: { code: { _is_null: false } },
+      grade: { _gte: 1 }  
+    }
+  ) {
     aggregate {
       count
     }
-   
   }
-  fail: result_aggregate(where: { grade: { _lt: 1 } }) {
+
+  failCount: audit_aggregate(
+    where: {
+      group: { campus: { _eq: "bahrain" } },
+      auditorId: { _eq: $auditorId },
+      private: { code: { _is_null: false } },
+      grade: { _lt: 1 }  
+    }
+  ) {
     aggregate {
       count
     }
-    
+  }
+
+  audits: audit(
+    where: {
+      group: { campus: { _eq: "bahrain" } },
+      auditorId: { _eq: $auditorId },
+      private: { code: { _is_null: false } }
+    }
+    order_by: { endAt: asc_nulls_last, createdAt: asc }
+  ) {
+    id
+    group {
+      id
+      path
+      captainLogin
+      captain {
+        canAccessPlatform
+      }
+    }
+    private {
+      code
+    }
+    createdAt
+    endAt
+    version
+    grade
   }
 }
-
-`;
-
-// TODO: change it to the correct query
-export const XP = gql`
-  query {
-    transaction(where: { type: { _regex: "xp" } }) {
-      path
-      amount
-      type
-      objectId
-    }
-  }
- 
 `;
 
 
-export const ALL_USERS_LEVEL = gql`
- query  {
-       event_user(where: { eventId: { _in: [72, 20, 250] } }) {
-      level
-      userId
-      userLogin
-      eventId
-  }
-
-  }
-`;
-
-// TODO: change it to the correct query
-export const ALL_USER_AUDIT = gql`
-  query  {
-        event_user(where: { eventId: { _in: [72, 20, 250] } }) {
-        auditRatio
-        userId
-        userLogin
-        eventId
-    }
-  
-    }
- 
-  `;
 
 
 
-
+ //---------Explore Query-----------------//
   export const SCHEMA_TABLE = gql`
  query {
         
@@ -126,7 +226,6 @@ export const ALL_USER_AUDIT = gql`
   }
 
   `;
-
 
   export const TableFields = gql`
   query {

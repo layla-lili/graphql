@@ -15,7 +15,7 @@ interface ApolloWrapperProps {
   context?: NextPageContext;
 }
 
-function decodeJwt(token: string | null | undefined) {
+export function decodeJwt(token: string | null | undefined) {
   if (!token) return null;
 
   const base64Url = token.split('.')[1]; // Get the payload part of the JWT

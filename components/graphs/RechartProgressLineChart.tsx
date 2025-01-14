@@ -33,7 +33,7 @@ export function RechartProgressLineChart() {
   const chartData = data.transaction.map((item: { createdAt: string; amount: number }) => ({
     createdAt: new Date(item.createdAt), // Convert to Date object
     progress_count: item.amount, // The value of progress
-    fill: "var(--color-visitors)", // Assign a color dynamically if needed
+    fill: "var(--chart-1)", // Assign a color dynamically if needed
   }));
 
   // Sort the data by date

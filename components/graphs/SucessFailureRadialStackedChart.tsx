@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@apollo/client";
-import { PASSFAILCOUNT } from "@/graphql/queries";
+import { USER_PASSFAILCOUNT } from "@/graphql/queries";
 import { TrendingUp } from "lucide-react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
 
@@ -19,6 +19,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { decodeJwt } from "@/app/ApolloWrapper";
 
 const chartConfig = {
   pass: {
@@ -32,13 +33,19 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function SucessFailureRadialStackedChart() {
-  const { data, loading, error } = useQuery(PASSFAILCOUNT);
+ const token = localStorage.getItem("JWT");
+  const decodedToken = decodeJwt(token);
+  const auditorId = decodedToken["sub"] || 0;
+  
+  const { data, loading, error } = useQuery(USER_PASSFAILCOUNT,  {
+    variables: { auditorId },
+  });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const passCount = data?.pass?.aggregate?.count || 0;
-  const failCount = data?.fail?.aggregate?.count || 0;
+  const passCount = data.passCount.aggregate.count || 0;
+  const failCount = data.failCount.aggregate.count || 0;
 
   const totalVisitors = passCount + failCount;
 
@@ -113,7 +120,7 @@ export function SucessFailureRadialStackedChart() {
           Your Pass and Fail <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total users with pass/fail status
+          Showing user pass and fail point
         </div>
       </CardFooter>
     </Card>

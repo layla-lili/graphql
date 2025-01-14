@@ -6,15 +6,16 @@ import UserInfo from "@/components/UserInfo";
 import SparklesText from "@/components/ui/sparkles-text";
 import { MarqueeDemo } from "@/components/ui/Footer";
 import Navbar from "@/components/Navbar";
-import ModeToggle from "@/components/mode-toggle";
-import ApexProgressLineChart from "@/components/graphs/RechartProgressLineChart";
+
+import RechartProgressLineChart from "@/components/graphs/RechartProgressLineChart";
 import SucessFailureRadialStackedChart from "@/components/graphs/SucessFailureRadialStackedChart";
 import SkillsPieChart from "@/components/graphs/SkillsPieChart";
 import LevelGrandBarChart from "@/components/graphs/LevelGrandBarChart";
 
 
-
 export default function Home() {
+ 
+
   return (
     <>
 
@@ -32,8 +33,8 @@ export default function Home() {
         </div>
         {/* graphs section */}
         <div className="container grid grid-cols-1 gap-10">
-          <SkillsInfo />
-         <ApexProgressLineChart />
+         <SkillsInfo />
+         <RechartProgressLineChart />
          <SucessFailureRadialStackedChart />
          <SkillsPieChart />
          <LevelGrandBarChart />

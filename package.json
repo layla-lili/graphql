@@ -21,6 +21,7 @@
     "cookie": "^1.0.2",
     "cookies": "^0.9.1",
     "graphql": "^16.10.0",
+    "jwt-decode": "^4.0.0",
     "lucide-react": "^0.469.0",
     "motion": "^11.17.0",
     "next": "15.1.3",

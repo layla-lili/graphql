@@ -106,6 +106,49 @@ export const PROGRESS = gql`
 
 `;
 
+//Count of Users at Each Level
+export const ALL_USERS_LEVEL_COUNT = gql`
+query {
+  event_user_aggregate(where: { eventId: { _in: [72, 20, 250] } }) {
+    nodes {
+      level
+    }
+    aggregate {
+      count(columns: level, distinct: true)
+    }
+  }
+}
+`;
+
+export const XP_RANGE_DATA = gql`
+query {
+  transaction_aggregate(where: { type: { _eq: "xp" } }) {
+    nodes {
+      userId
+      amount
+    }
+  }
+}
+`;
+
+export const  ALL_LEVEL= gql`
+query {
+  event_user(where: { eventId: { _in: [72, 20, 250] } }) {
+    level
+  }
+}
+`;
+
+export const ALL_XP = gql`
+query {
+  transaction(where: { eventId: { _in: [72, 20, 250] }, type: { _eq: "xp" } }) {
+    amount
+  }
+}
+`;
+
+
+
 //$userId  => login user id
 // $selectedEventId => event id
 // $rootEventId grand parent event id  eventId: { _in: [72, 20, 250] }

@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  type ChartConfig,
+    type ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
@@ -39,7 +39,7 @@ const levelData = [
   
   const ChartConfig = {
     count: {
-      label: "students count",
+      label: "students",
     },
     level: {
       label: "Level",
@@ -65,17 +65,17 @@ const levelData = [
 //   },
 // } satisfies ChartConfig
 
-export default function LevelGrandBarChart() {
+export function Component() {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof ChartConfig>("level")
 
-    const total = React.useMemo(
-      () => ({
-        level: Math.max(...levelData.map(item => item.level)), // Find the maximum level
-        xp: Math.max(...xpData.map(curr => curr.count)), // Find the maximum XP
-      }),
-      [levelData, xpData] // Include dependencies for re-calculation
-    )
+  const total = React.useMemo(
+    () => ({
+      level: levelData.reduce((acc, curr) => acc + curr.count, 0),
+      xp: xpData.reduce((acc, curr) => acc + curr.count, 0),
+    }),
+    []
+  )
 
   return (
     <Card>
@@ -114,7 +114,7 @@ export default function LevelGrandBarChart() {
         >
           <BarChart
             accessibilityLayer
-            data={xpData}
+            data={levelData}
             margin={{
               left: 12,
               right: 12,
@@ -122,7 +122,7 @@ export default function LevelGrandBarChart() {
           >
             <CartesianGrid vertical={false} />
             <XAxis
-              dataKey="count"
+              dataKey="date"
               tickLine={false}
               axisLine={false}
               tickMargin={8}
@@ -133,11 +133,9 @@ export default function LevelGrandBarChart() {
               content={
                 <ChartTooltipContent
                   className="w-[150px]"
-                  nameKey="count"
+                  nameKey="views"
                  
                 />
-                
-                
               }
             />
             <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@apollo/client";
 import { PROGRESS } from "@/graphql/queries"; // Replace with your actual query
 import { TrendingUp } from "lucide-react";
@@ -19,6 +20,8 @@ import {
 } from "@/components/ui/chart";
 
 export function RechartProgressLineChart() {
+  const [timeFrame, setTimeFrame] = useState('1 month'); // Default time frame
+
   // Fetching data
   const { data, loading, error } = useQuery(PROGRESS);
 
@@ -45,6 +48,43 @@ export function RechartProgressLineChart() {
     month: item.createdAt.toLocaleString("default", { month: "short", year: "numeric" }), // "Jan 2024"
   }));
 
+  // Function to filter the data based on the selected time frame
+  const filterDataByTimeFrame = (timeFrame: string) => {
+    const now = new Date();
+    let startDate;
+
+    switch (timeFrame) {
+      case '1 week':
+        startDate = new Date();
+        startDate.setDate(now.getDate() - 7);
+        break;
+      case '1 month':
+        startDate = new Date();
+        startDate.setMonth(now.getMonth() - 1);
+        break;
+      case '3 months':
+        startDate = new Date();
+        startDate.setMonth(now.getMonth() - 3);
+        break;
+      case '6 months':
+        startDate = new Date();
+        startDate.setMonth(now.getMonth() - 6);
+        break;
+      case '1 year':
+        startDate = new Date();
+        startDate.setFullYear(now.getFullYear() - 1);
+        break;
+      default:
+        startDate = new Date();
+        break;
+    }
+
+    return formattedChartData.filter((item: { createdAt: Date; }) => item.createdAt.getTime() >= startDate.getTime());
+  };
+
+  // Filter data based on the selected time frame
+  const filteredData = filterDataByTimeFrame(timeFrame);
+
   // Generate random color (avoid black and white)
   const generateRandomColor = () => {
     const randomColor = () => Math.floor(Math.random() * 256); // Random RGB values
@@ -69,17 +109,51 @@ export function RechartProgressLineChart() {
     },
   } satisfies ChartConfig;
 
+  // Determine the chart title dynamically based on the time frame
+  const getTitle = () => {
+    switch (timeFrame) {
+      case '1 week':
+        return "Progress in Last 1 Week";
+      case '1 month':
+        return "Progress in Last 1 Month";
+      case '3 months':
+        return "Progress in Last 3 Months";
+      case '6 months':
+        return "Progress in Last 6 Months";
+      case '1 year':
+        return "Progress in Last 1 Year";
+      default:
+        return "Progress Chart";
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Monthly Progress Count</CardTitle>
-        <CardDescription>Progress over the last 6 months</CardDescription>
+        <CardTitle>{getTitle()}</CardTitle>
+        <CardDescription>Progress over the selected time frame</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="mb-4">
+          <label htmlFor="timeFrame" className="mr-2">Select Time Frame:</label>
+          <select
+            id="timeFrame"
+            value={timeFrame}
+            onChange={(e) => setTimeFrame(e.target.value)}
+            className="p-2 border rounded"
+          >
+            <option value="1 week">1 Week</option>
+            <option value="1 month">1 Month</option>
+            <option value="3 months">3 Months</option>
+            <option value="6 months">6 Months</option>
+            <option value="1 year">1 Year</option>
+          </select>
+        </div>
+
         <ChartContainer config={chartConfig}>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
-              data={formattedChartData}
+              data={filteredData}
               margin={{
                 top: 24,
                 left: 24,
@@ -126,7 +200,7 @@ export function RechartProgressLineChart() {
           Progress count last months <TrendingUp className="h-4 w-4" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing progress count for the last 6 months
+          Showing progress count for the last {timeFrame}
         </div>
       </CardFooter>
     </Card>

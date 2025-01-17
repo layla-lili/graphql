@@ -6,14 +6,16 @@ import {
   ApolloClient,
   InMemoryCache,
 } from "@apollo/experimental-nextjs-app-support";
-import { useAuth } from "@/context/authContext"; // Import the useAuth hook
 import { NextPageContext } from "next";
 import React from "react";
+import Cookies from 'js-cookie';
 
 interface ApolloWrapperProps {
   children: React.ReactNode;
   context?: NextPageContext;
 }
+
+
 
 export function decodeJwt(token: string | null | undefined) {
   if (!token) return null;
@@ -25,30 +27,10 @@ export function decodeJwt(token: string | null | undefined) {
   return JSON.parse(decoded); // Parse it as JSON
 }
 
-// function makeClient(context?: NextPageContext, token: string | null = "") {
-    
-//   const decodedToken = decodeJwt(token);
-//   console.log("Decoded JWT:", decodedToken);
-//   console.log("context from makeclient", context);
 
-//   const httpLink = new HttpLink({
-//     uri: "https://learn.reboot01.com/api/graphql-engine/v1/graphql", // Your GraphQL API URL
-//     headers: {
-//       Authorization: token ? `Bearer ${token}` : "", // Attach token if present
-//     },
-//     fetchOptions: { cache: "no-store" }, // Disable caching (optional)
-//   });
-
-//   return new ApolloClient({
-//     cache: new InMemoryCache(),
-//     link: httpLink,
-//   });
-// }
 
 function makeClient(context?: NextPageContext, token: string | null = null) {
-  const decodedToken = decodeJwt(token);
-  console.log("Decoded JWT:", decodedToken);
-  console.log("context from makeclient", context);
+
 
   const httpLink = new HttpLink({
     uri: "https://learn.reboot01.com/api/graphql-engine/v1/graphql", // Your GraphQL API URL
@@ -66,8 +48,14 @@ function makeClient(context?: NextPageContext, token: string | null = null) {
 
 
 export function ApolloWrapper({ children, context }: ApolloWrapperProps) {
-  // const { token } = useAuth();
-  let token = localStorage.getItem("JWT");
+
+//   const token = typeof window !== "undefined" ? localStorage.getItem("JWT") : null;
+// if (!token) {
+//   return <p>No token found. Please log in.</p>;
+// }
+
+const token = Cookies.get('JWT'); // Get token from cookies
+
   
   // Create client whenever token changes
   const client = React.useMemo(

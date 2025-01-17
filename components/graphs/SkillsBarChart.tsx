@@ -1,7 +1,7 @@
 "use client";
 
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, XAxis, YAxis, LabelList, Cell } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -18,16 +18,23 @@ import {
 import { useQuery } from "@apollo/client";
 import { SKILLS } from "@/graphql/queries";
 
+// Define types for transactions and query response
+interface Transaction {
+  type: string; // Transaction type
+  amount: number; // Transaction amount
+}
+
+interface SkillsData {
+  transaction: Transaction[]; // Array of transactions
+}
 
 const SkillsBarChart = () => {
-  const { data, loading, error } = useQuery(SKILLS);
+  const { data, loading, error } = useQuery<SkillsData>(SKILLS);
   const skillSummary: { [key: string]: number } = {};
 
-  // const colors = [
-  //   "var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)",
-  //   "var(--chart-6)", "var(--chart-7)", "var(--chart-8)", "var(--chart-9)", "var(--chart-10)",
-  //   "var(--chart-11)", "var(--chart-12)", "var(--chart-13)", "var(--chart-14)", "var(--chart-15)",
-  // ];
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
   const colors = [
     "#2662d9", // --chart-1
     "#e23670", // --chart-2
@@ -37,7 +44,7 @@ const SkillsBarChart = () => {
   ];
 
   if (data?.transaction) {
-    data.transaction.forEach((transaction: { type: any; amount: any }) => {
+    data.transaction.forEach((transaction) => {
       const skillType = transaction.type;
       const amount = transaction.amount;
 
@@ -55,35 +62,28 @@ const SkillsBarChart = () => {
   );
 
   const barChartData = Object.entries(skillSummary)
-  .filter(([skill, amount]) => skill && skill.trim() !== "" && amount > 0)
-  .map(([skill, amount], index) => ({
-    skillName: skill.replace(/^skill_/, "").replace(/_/g, " "),
-    skillRatio: Math.round((amount / totalAmount) * 100),
-    fill: colors[index % colors.length], // Assign color dynamically
-  }))
-  .sort((a, b) => b.skillRatio - a.skillRatio) // Take the top 5 skills
+    .filter(([skill, amount]) => skill && skill.trim() !== "" && amount > 0)
+    .map(([skill, amount], index) => ({
+      skillName: skill.replace(/^skill_/, "").replace(/_/g, " "),
+      skillRatio: Math.round((amount / totalAmount) * 100),
+      fill: colors[index % colors.length], // Assign color dynamically
+    }))
+    .sort((a, b) => b.skillRatio - a.skillRatio); // Sort by skill ratio
 
   const chartConfig: { [key: string]: { label: string } } = {
     skills: {
       label: "Percentage (%)",
     },
-    // Define additional skills and colors here if needed
   };
 
   return (
-    <Card >
-      {" "}
-      {/* Full width */}
+    <Card>
       <CardHeader>
         <CardTitle>Skills Bar Chart - Mixed</CardTitle>
         <CardDescription>Overview of skills used</CardDescription>
       </CardHeader>
       <CardContent>
-        {" "}
-        {/* Full width */}
         <ChartContainer config={chartConfig}>
-          {/* <BarChart data={barChartData} layout="vertical" margin={{ left: 0 }}> */}
-          {/* <BarChart data={barChartData} layout="vertical" margin={{ top: 20, right: 120, bottom: 20, left: 30 }}> */}
           <BarChart
             data={barChartData}
             layout="vertical"
@@ -104,22 +104,16 @@ const SkillsBarChart = () => {
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            {/* <Bar dataKey="skillRatio" layout="vertical" radius={5}> */}
-            {/* <Bar dataKey="skillRatio" layout="vertical" radius={5} barSize={25}>  */}
-            {/* Adjusted bar size for spacing */}
-            {/* <LabelList dataKey="skillRatio" position="right" /> */}
-            {/* </Bar> */}
-            {/* <Bar dataKey="skillRatio" radius={5} barSize={25} /> */}
             <Bar
-    dataKey="skillRatio"
-    radius={5}
-    barSize={20}
-    isAnimationActive={true}
-  >
-    {barChartData.map((entry, index) => (
-      <Cell key={`cell-${index}`} fill={entry.fill} />
-    ))}
-  </Bar>
+              dataKey="skillRatio"
+              radius={5}
+              barSize={20}
+              isAnimationActive={true}
+            >
+              {barChartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.fill} />
+              ))}
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>

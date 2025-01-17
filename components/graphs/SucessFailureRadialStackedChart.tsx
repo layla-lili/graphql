@@ -4,7 +4,6 @@ import { useQuery } from "@apollo/client";
 import { USER_PASSFAILCOUNT } from "@/graphql/queries";
 import { TrendingUp } from "lucide-react";
 import { Label, PolarRadiusAxis, RadialBar, RadialBarChart } from "recharts";
-
 import {
   Card,
   CardContent,
@@ -20,6 +19,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { decodeJwt } from "@/app/ApolloWrapper";
+import Cookies from 'js-cookie';
 
 const chartConfig = {
   pass: {
@@ -33,19 +33,22 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function SucessFailureRadialStackedChart() {
- const token = localStorage.getItem("JWT");
-  const decodedToken = decodeJwt(token);
-  const auditorId = decodedToken["sub"] || 0;
-  
-  const { data, loading, error } = useQuery(USER_PASSFAILCOUNT,  {
+  const token = Cookies.get('JWT'); // Get token from cookies
+  const decodedToken = token ? decodeJwt(token) : null;
+  const auditorId = decodedToken ? decodedToken["sub"] : null;
+
+  // Skip the query if auditorId is not available
+  const { data, loading, error } = useQuery(USER_PASSFAILCOUNT, {
     variables: { auditorId },
+    skip: !auditorId, // Skip query if auditorId is null
   });
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
-  const passCount = data.passCount.aggregate.count || 0;
-  const failCount = data.failCount.aggregate.count || 0;
+  // Ensure data is defined and handle default counts
+  const passCount = data?.passCount?.aggregate?.count || 0;
+  const failCount = data?.failCount?.aggregate?.count || 0;
 
   const totalVisitors = passCount + failCount;
 

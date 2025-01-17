@@ -9,9 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  ChartConfig,
   ChartContainer,
-  ChartStyle,
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
@@ -25,26 +23,31 @@ import {
 import { useQuery } from "@apollo/client";
 import { SKILLS } from "@/graphql/queries";
 
-const SkillsPieChart = () => {
-  const { data, loading, error } = useQuery(SKILLS);
-  const skillSummary: { [key: string]: number } = {};
+// Define the type for the transaction data
+interface Transaction {
+  type: string;
+  amount: number;
+}
 
-  // Sample colors for top 5 skills
+const SkillsPieChart: React.FC = () => {
+  const { data, loading, error } = useQuery<{ transaction: Transaction[] }>(SKILLS);
+  const [activeSkill, setActiveSkill] = React.useState<string>("");
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
+  const skillSummary: { [key: string]: number } = {};
   const colors = [
     "#2662d9", "#e23670", "#e88c30", "#af57db", "#2eb88a",
   ];
 
   // Process data to accumulate skill amounts
   if (data?.transaction) {
-    data.transaction.forEach((transaction: { type: any; amount: any }) => {
+    data.transaction.forEach((transaction) => {
       const skillType = transaction.type;
       const amount = transaction.amount;
 
-      if (skillSummary[skillType]) {
-        skillSummary[skillType] += amount;
-      } else {
-        skillSummary[skillType] = amount;
-      }
+      skillSummary[skillType] = (skillSummary[skillType] || 0) + amount;
     });
   }
 
@@ -63,15 +66,13 @@ const SkillsPieChart = () => {
     .sort((a, b) => b.skillRatio - a.skillRatio)
     .slice(0, 5);
 
-  const skillTypes = topSkills.map((skill) => skill.skillName);
-  const chartConfig: { [key: string]: { label: string } } = {
-    skills: { label: "Percentage (%)" },
-  };
-
-  const [activeSkill, setActiveSkill] = React.useState(skillTypes[0]);
   const activeSkillData = topSkills.find(
     (entry) => entry.skillName === activeSkill
   );
+
+  const chartConfig: { [key: string]: { label: string } } = {
+    skills: { label: "Percentage (%)" },
+  };
 
   return (
     <Card>
@@ -105,8 +106,8 @@ const SkillsPieChart = () => {
               data={topSkills}
               dataKey="skillRatio"
               nameKey="skillName"
-              innerRadius={50}  // Decrease inner radius to make the pie larger
-              outerRadius={100} // Increase outer radius for a bigger pie
+              innerRadius={50}
+              outerRadius={100}
               fill="#8884d8"
               labelLine={false}
               activeIndex={topSkills.findIndex(skill => skill.skillName === activeSkill)}

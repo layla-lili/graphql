@@ -15,7 +15,6 @@ import {
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
 
@@ -24,6 +23,7 @@ export function RechartProgressLineChart() {
 
   // Fetching data
   const { data, loading, error } = useQuery(PROGRESS);
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -43,7 +43,8 @@ export function RechartProgressLineChart() {
   chartData.sort((a: { createdAt: number; }, b: { createdAt: number; }) => a.createdAt - b.createdAt);
 
   // Format the createdAt field to Month-Year format (e.g., "Jan 2024")
-  const formattedChartData = chartData.map((item: { createdAt: { toLocaleString: (arg0: string, arg1: { month: string; year: string; }) => any; }; }) => ({
+  const formattedChartData = chartData.map((item: { createdAt: { 
+    toLocaleString: (arg0: string, arg1: { month: string; year: string; }) => string; }; }) => ({
     ...item,
     month: item.createdAt.toLocaleString("default", { month: "short", year: "numeric" }), // "Jan 2024"
   }));
@@ -185,7 +186,7 @@ export function RechartProgressLineChart() {
                       r={5}
                       cx={cx}
                       cy={cy}
-                      fill={"#4CAF50"}  // Apply fill here
+                      fill={fill}  // Apply fill here
                       stroke={"#4CAF50"} // Ensure stroke is the same color as fill
                     />
                   );

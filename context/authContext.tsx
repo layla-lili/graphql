@@ -3,9 +3,14 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 
 // Define types for the token and decoded token
-interface AuthContextType {
+
+interface DecodedTokenType {
+  userId: string; // Example property
+  // Add other properties that are part of your decoded token
+}
+export interface AuthContextType {
   token: string | null;
-  decodedToken: any; // You can type this more specifically if needed
+  decodedToken: DecodedTokenType; // You can type this more specifically if needed
   setToken: (token: string) => void;
   clearToken: () => void;
 }

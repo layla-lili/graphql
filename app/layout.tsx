@@ -4,8 +4,6 @@ import { AuthProvider } from "@/context/authContext";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { Metadata } from "next";
 import "./globals.css";
-import StarryBackground from "@/components/staryNight";
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,27 +22,22 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  context, // Receive the context prop
 }: {
   children: React.ReactNode;
-  context?: any; // Type it as 'any' or a more specific type if needed
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased `} >
-    
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          <ApolloWrapper context={context}>
+          <ApolloWrapper>
             <ThemeProvider
               attribute="class"
               defaultTheme="system"
               enableSystem
               disableTransitionOnChange
             >
-      
               <div className="md:container md:mx-auto">
                 <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-          
                   {children}
                 </main>
               </div>

@@ -42,12 +42,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       Cookies.set("JWT", newToken, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
       Cookies.set("Id", userId, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
 
-    // Redirect after setting token
-    router.push("/");
-    router.refresh();
+      // Navigate to "/" and trigger page refresh
+      router.push("/");
 
-    // Force refresh after setting token
-    // window.location.reload();
+       // Use useEffect to reload page when route changes
+       if (typeof window !== "undefined") {
+        // Delay the reload to make sure navigation is complete
+        setTimeout(() => {
+          window.location.reload(); // Force a page reload after navigation
+        }, 300); // Delay to ensure navigation has happened
+      }
+    
     } else {
       // Clear cookies if no token is provided
       Cookies.remove("JWT");

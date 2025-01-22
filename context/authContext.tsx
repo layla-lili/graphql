@@ -42,9 +42,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       Cookies.set("JWT", newToken, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
       Cookies.set("Id", userId, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
 
-      // Redirect after setting token
-      router.push("/");
-      window.location.href = window.location.href;
+    // Redirect after setting token
+    router.push("/");
+    router.refresh();
+
+    // Force refresh after setting token
+    window.location.reload();
     } else {
       // Clear cookies if no token is provided
       Cookies.remove("JWT");

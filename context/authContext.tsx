@@ -1,8 +1,8 @@
 "use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
 import { decodeJwt } from "@/app/ApolloWrapper";
-import Cookies from "js-cookie"; // Use js-cookie for cookie handling
-import { useRouter } from "next/navigation"; // Ensure correct import from next/navigation
+import Cookies from "js-cookie"; // Using js-cookie for cookie handling
+import { useRouter } from "next/navigation"; // Ensure correct import for next/navigation
 
 interface AuthContextType {
   token: string | null;
@@ -16,21 +16,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setTokenState] = useState<string | null>(null);
   const [UserID, setUserId] = useState<string | null>(null);
-  const router = useRouter(); // Use the router hook
+  const router = useRouter(); // Next.js router
 
   // Effect to load the token and user ID on mount
   useEffect(() => {
     const getTokenFromCookie = () => {
-      return Cookies.get("JWT") || null; // Using js-cookie to read the cookie
+      return Cookies.get("JWT") || null; // Read the JWT token from cookies
     };
 
     const savedToken = getTokenFromCookie();
     if (savedToken && !token) {
-      setTokenState(savedToken); // Set token state
-      const userId = decodeJwt(savedToken)?.sub || null; // Decode and extract user ID
+      setTokenState(savedToken); // Set the token state
+      const userId = decodeJwt(savedToken)?.sub || null; // Decode token and get user ID
       setUserId(userId); // Set user ID
     }
-  }, []); // Only run on mount, no need for `token` dependency here
+  }, []); // Only run once on mount
 
   const setToken = (newToken: string | null) => {
     if (newToken) {
@@ -38,27 +38,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUserId(userId); // Set the user ID
 
       // Save token and user ID to cookies
-      const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString(); // Set token expiration
+      const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString(); // Token expiration (1 hour)
       Cookies.set("JWT", newToken, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
       Cookies.set("Id", userId, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
 
-      // Navigate to "/" and trigger page refresh
+      // Navigate to "/" page
       router.push("/");
 
-       // Use useEffect to reload page when route changes
-       if (typeof window !== "undefined") {
-        // Delay the reload to make sure navigation is complete
-        setTimeout(() => {
-          window.location.reload(); // Force a page reload after navigation
-        }, 300); // Delay to ensure navigation has happened
-      }
-    
+      
     } else {
       // Clear cookies if no token is provided
       Cookies.remove("JWT");
       Cookies.remove("Id");
     }
-    setTokenState(newToken); // Update state
+    setTokenState(newToken); // Update state with the new token
   };
 
   const clearToken = () => {

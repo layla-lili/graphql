@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.refresh();
 
     // Force refresh after setting token
-    window.location.reload();
+    // window.location.reload();
     } else {
       // Clear cookies if no token is provided
       Cookies.remove("JWT");

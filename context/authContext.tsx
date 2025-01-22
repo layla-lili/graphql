@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Redirect after setting token
       router.push("/");
-      window.location.reload(); // This forces the page to reload
+      window.location.href = window.location.href;
     } else {
       // Clear cookies if no token is provided
       Cookies.remove("JWT");

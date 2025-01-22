@@ -4,15 +4,18 @@ import axios, { AxiosError } from "axios"; // Import Axios and AxiosError
 import { useState } from "react";
 import Image from "next/image";
 // import { useRouter } from "next/navigation"; // Make sure to import from next/navigation
-import { useAuth } from "@/context/authContext"; // Import the context
+import { decodeJwt } from "@/app/ApolloWrapper";
+import { setAuthCookies } from "@/app/actions/auth";
 
 export default function LoginForm() {
   const [message, setMessage] = useState<string>("");
   // const router = useRouter(); // Use the router hook
-  const { setToken } = useAuth(); // Access setToken from context
-
+  const [isLoading, setIsLoading] = useState(false);
+  console.log("isLoading:", isLoading);
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
+    
     const form = event.currentTarget;
     const identifier = form.username.value;
     const password = form.password.value;
@@ -30,16 +33,16 @@ export default function LoginForm() {
 
       if (response.status === 200) {
         const token = response.data;
-        console.log("Token from login:", token);
         if (token) {
-          setToken(token); // Set token and user ID in context and cookie
-          // router.push("/");
-        
+          const userId = decodeJwt(token)?.sub;
+          if (userId) {
+            await setAuthCookies(token, userId);
+          } else {
+            throw new Error("User ID not found in token");
+          }
         } else {
           throw new Error("Token not found in response");
         }
-      } else {
-        throw new Error("Invalid credentials");
       }
     } catch (error) {
       const axiosError = error as AxiosError;
@@ -52,6 +55,8 @@ export default function LoginForm() {
           axiosError?.message ||
           "An unexpected error occurred."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 

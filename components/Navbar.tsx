@@ -1,27 +1,21 @@
+"use client";
+
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 import ModeToggle from './mode-toggle';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
+import { logout } from "@/app/actions/auth";
 
 const Navbar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  const handleLogout = () => {
-    // Remove JWT from local storage
-    // localStorage.removeItem("JWT");
-    
-    // Remove only the JWT cookie
-    // document.cookie = "JWT=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    Cookies.remove('JWT');
-    Cookies.remove('Id');
-  
-    // Redirect to login page
-    router.push('/login');
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (

@@ -43,8 +43,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       Cookies.set("Id", userId, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
 
       // Navigate to "/" page
-      // router.push("/");
+      router.push("/");
+      
       router.prefetch("/");
+      console.log("Navigated to /");
 
       
     } else {

@@ -56,11 +56,13 @@ export default function RootLayout({
               </ThemeProvider>
             </ApolloWrapper>
           ) : (
+            <ThemeProvider>
             <div className="md:container md:mx-auto">
               <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
                 {children}
               </main>
             </div>
+            </ThemeProvider>
           )}
         </AuthProvider>
       </body>

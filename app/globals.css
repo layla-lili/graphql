@@ -10,14 +10,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   overflow-y: auto;
   transition: margin 0.3s ease, padding 0.3s ease;
-  
-  
+  background-color: #1d2b39;
 }
-
-
-
-
-
 
 @layer base {
   :root {
@@ -47,25 +41,21 @@ body {
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%; */
 
-
-
- 
-      --chart-1: 173 58% 39%; /* Original */
-      --chart-2: 12 76% 61%; /* Original */
-      --chart-3: 197 37% 24%; /* Original */
-      --chart-4: 43 74% 66%; /* Original */
-      --chart-5: 27 87% 67%; /* Original */
-      --chart-6: 200 65% 45%; /* Cool teal */
-      --chart-7: 50 75% 70%; /* Light lime */
-      --chart-8: 310 60% 65%; /* Vibrant magenta */
-      --chart-9: 25 85% 60%; /* Soft orange */
-      --chart-10: 190 55% 40%; /* Dark cyan */
-      --chart-11: 15 85% 55%; /* Warm coral */
-      --chart-12: 270 50% 50%; /* Soft purple */
-      --chart-13: 120 50% 50%; /* Fresh green */
-      --chart-14: 90 60% 55%; /* Chartreuse */
-      --chart-15: 240 50% 40%; /* Deep blue */
-    
+    --chart-1: 173 58% 39%; /* Original */
+    --chart-2: 12 76% 61%; /* Original */
+    --chart-3: 197 37% 24%; /* Original */
+    --chart-4: 43 74% 66%; /* Original */
+    --chart-5: 27 87% 67%; /* Original */
+    --chart-6: 200 65% 45%; /* Cool teal */
+    --chart-7: 50 75% 70%; /* Light lime */
+    --chart-8: 310 60% 65%; /* Vibrant magenta */
+    --chart-9: 25 85% 60%; /* Soft orange */
+    --chart-10: 190 55% 40%; /* Dark cyan */
+    --chart-11: 15 85% 55%; /* Warm coral */
+    --chart-12: 270 50% 50%; /* Soft purple */
+    --chart-13: 120 50% 50%; /* Fresh green */
+    --chart-14: 90 60% 55%; /* Chartreuse */
+    --chart-15: 240 50% 40%; /* Deep blue */
   }
 
   .dark {

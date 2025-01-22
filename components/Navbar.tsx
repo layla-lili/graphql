@@ -13,11 +13,12 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     // Remove JWT from local storage
-    localStorage.removeItem("JWT");
+    // localStorage.removeItem("JWT");
     
     // Remove only the JWT cookie
     // document.cookie = "JWT=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     Cookies.remove('JWT');
+    Cookies.remove('Id');
   
     // Redirect to login page
     router.push('/login');

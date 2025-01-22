@@ -33,6 +33,7 @@ const SkillsPieChart: React.FC = () => {
   const { data, loading, error } = useQuery<{ transaction: Transaction[] }>(SKILLS);
   const [activeSkill, setActiveSkill] = React.useState<string>("");
 
+  console.log("data from SkillsPieChart", data);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 

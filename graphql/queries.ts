@@ -53,6 +53,8 @@ export const ALL_USERS_LEVEL = gql`
   }
 `;
 
+
+//user info and xp and level sum
 export const XP_LEVEL = gql`
 query rootEventDetails($userId: Int!, $rootEventId: Int!) {
     xp: transaction_aggregate(
@@ -83,7 +85,9 @@ query rootEventDetails($userId: Int!, $rootEventId: Int!) {
   }
 `;
 
-// xp progress over time
+
+
+// xp progress over time only for the user as a captain
 export const PROGRESS = gql`
  query Transaction {
     transaction(
@@ -148,24 +152,50 @@ query {
 `;
 
 
+export const PROGRESS_CHART = gql`
+query  transaction($userId: Int!){
+   transaction( order_by: [{createdAt: asc}]
+    where: {
+        userId: { _eq: $userId }
+        type: { _eq: "xp" }
+        eventId: { _eq: 20 }
+      }
+  )
+  {
+    id
+    type
+    amount
+    userId
+    attrs
+    createdAt
+    path
+    objectId
+    eventId
+    campus
+  }
+}
+`;
 
 //$userId  => login user id
 // $selectedEventId => event id
 // $rootEventId grand parent event id  eventId: { _in: [72, 20, 250] }
+//250 => piscine
+//20 => module
+//72 => event
 //TODO
-const USER_PROGRESS = gql`
-query progress($userId: Int!, $selectedEventId: Int!, $rootEventId: Int!) {
+export const USER_PROGRESS = gql`
+query progress($userId: Int!) {
     progress (
       order_by: [{ path: asc} , {createdAt: asc}, {grade: asc }]
       where: {
         userId: { _eq: $userId }
         _or: [
-          { eventId: { _eq: $selectedEventId} },
-          { event: { parentId: { _eq: $selectedEventId } } },
+          { eventId: { _in: [72, 20, 250] } },
+          { event: { parentId: { _eq: 72 } } },
           {
             event: {
               object: { type: { _eq: "module" } }
-              children: { id: { _eq: $selectedEventId } }
+              children: { id: { _eq: 72 } }
             }
           },
           {
@@ -174,7 +204,7 @@ query progress($userId: Int!, $selectedEventId: Int!, $rootEventId: Int!) {
               {
                 event: {
                   parent: { object: { type: { _eq: "module" } } }
-                  parentId: { _eq: $rootEventId }
+                  parentId: { _eq: 72 }
                 }
               }
             ]

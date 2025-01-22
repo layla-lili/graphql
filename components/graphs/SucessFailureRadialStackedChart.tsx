@@ -18,8 +18,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { decodeJwt } from "@/app/ApolloWrapper";
-import Cookies from 'js-cookie';
+
 
 const chartConfig = {
   pass: {
@@ -32,16 +31,20 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export function SucessFailureRadialStackedChart() {
-  const token = Cookies.get('JWT'); // Get token from cookies
-  const decodedToken = token ? decodeJwt(token) : null;
-  const auditorId = decodedToken ? decodedToken["sub"] : null;
+export function SucessFailureRadialStackedChart({ auditorId }: { auditorId: string }) {
+  // const token = Cookies.get('JWT'); // Get token from cookies
+  // const decodedToken = token ? decodeJwt(token) : null;
+  // const auditorId = decodedToken ? decodedToken["sub"] : null;
+  
 
   // Skip the query if auditorId is not available
   const { data, loading, error } = useQuery(USER_PASSFAILCOUNT, {
     variables: { auditorId },
     skip: !auditorId, // Skip query if auditorId is null
+    fetchPolicy: "no-cache",  // Disable cache temporarily for testing
   });
+
+  console.log("data from SucessFailureRadialStackedChart", data);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;

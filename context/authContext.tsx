@@ -1,77 +1,76 @@
-"use client"; // Ensures the code runs on the client side
-
+"use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
+import { decodeJwt } from "@/app/ApolloWrapper";
+import Cookies from "js-cookie"; // Use js-cookie for cookie handling
+import { useRouter } from "next/navigation"; // Ensure correct import from next/navigation
 
-// Define types for the token and decoded token
-
-interface DecodedTokenType {
-  userId: string; // Example property
-  // Add other properties that are part of your decoded token
-}
-export interface AuthContextType {
+interface AuthContextType {
   token: string | null;
-  decodedToken: DecodedTokenType; // You can type this more specifically if needed
-  setToken: (token: string) => void;
+  UserID: string | null;
+  setToken: (token: string | null) => void;
   clearToken: () => void;
 }
 
-// Default values for the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setTokenState] = useState<string | null>(null);
-  const [decodedToken, setDecodedToken] = useState<any>(null);
+  const [UserID, setUserId] = useState<string | null>(null);
+  const router = useRouter(); // Use the router hook
 
-  // Single useEffect to handle token initialization and updates
+  // Effect to load the token and user ID on mount
   useEffect(() => {
     const getTokenFromCookie = () => {
-      return document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("JWT="))
-        ?.split("=")[1] || null;
+      return Cookies.get("JWT") || null; // Using js-cookie to read the cookie
     };
 
-    // Initialize token from cookie
     const savedToken = getTokenFromCookie();
     if (savedToken && !token) {
-      setTokenState(savedToken);
+      setTokenState(savedToken); // Set token state
+      const userId = decodeJwt(savedToken)?.sub || null; // Decode and extract user ID
+      setUserId(userId); // Set user ID
     }
-  }, []); // Only run on mount
+  }, []); // Only run on mount, no need for `token` dependency here
 
   const setToken = (newToken: string | null) => {
-    console.log("Setting token in AuthContext:", newToken);
     if (newToken) {
-      // Save to cookie when token is set
-      const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString();
-      document.cookie = `JWT=${newToken}; Path=/; Secure; SameSite=Strict; Expires=${expiration}`;
+      const userId = decodeJwt(newToken)?.sub || null;
+      setUserId(userId); // Set the user ID
+
+      // Save token and user ID to cookies
+      const expiration = new Date(new Date().getTime() + 60 * 60 * 1000).toUTCString(); // Set token expiration
+      Cookies.set("JWT", newToken, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
+      Cookies.set("Id", userId, { expires: new Date(expiration), path: "/", secure: true, sameSite: "Strict" });
+
+      // Redirect after setting token
+      router.push("/");
+      window.location.reload(); // This forces the page to reload
     } else {
-      // Clear cookie when token is null
-      document.cookie = "JWT=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      // Clear cookies if no token is provided
+      Cookies.remove("JWT");
+      Cookies.remove("Id");
     }
-    setTokenState(newToken);
+    setTokenState(newToken); // Update state
   };
 
   const clearToken = () => {
     setTokenState(null);
-    setDecodedToken(null);
+    setUserId(null);
+    Cookies.remove("JWT");
+    Cookies.remove("Id");
   };
 
   return (
-    <AuthContext.Provider value={{ token, decodedToken, setToken, clearToken }}>
+    <AuthContext.Provider value={{ token, UserID, setToken, clearToken }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook to use the AuthContext
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-  console.log("AuthContext:", context); // Log the entire context to see the token state
   return context;
 };
-
-
-

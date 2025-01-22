@@ -31,6 +31,7 @@ interface SkillsData {
 const SkillsBarChart = () => {
   const { data, loading, error } = useQuery<SkillsData>(SKILLS);
   const skillSummary: { [key: string]: number } = {};
+   console.log("data from SkillsBarChart", data);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;

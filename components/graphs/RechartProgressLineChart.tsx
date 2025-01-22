@@ -19,18 +19,17 @@ import {
 } from "@/components/ui/chart";
 
 export function RechartProgressLineChart() {
+
   const [timeFrame, setTimeFrame] = useState('1 month'); // Default time frame
 
   // Fetching data
   const { data, loading, error } = useQuery(PROGRESS);
 
+  console.log("data from RechartProgressLineChart", data);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-  if (error) {
-    return <div>Error fetching data</div>;
-  }
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   // Transform the data into chart-friendly format
   const chartData = data.transaction.map((item: { createdAt: string; amount: number }) => ({
@@ -71,10 +70,10 @@ export function RechartProgressLineChart() {
         startDate = new Date();
         startDate.setMonth(now.getMonth() - 6);
         break;
-      case '1 year':
-        startDate = new Date();
-        startDate.setFullYear(now.getFullYear() - 1);
-        break;
+      // case '1 year':
+      //   startDate = new Date();
+      //   startDate.setFullYear(now.getFullYear() - 1);
+      //   break;
       default:
         startDate = new Date();
         break;
@@ -121,8 +120,8 @@ export function RechartProgressLineChart() {
         return "Progress in Last 3 Months";
       case '6 months':
         return "Progress in Last 6 Months";
-      case '1 year':
-        return "Progress in Last 1 Year";
+      // case '1 year':
+      //   return "Progress in Last 1 Year";
       default:
         return "Progress Chart";
     }
@@ -147,7 +146,7 @@ export function RechartProgressLineChart() {
             <option value="1 month">1 Month</option>
             <option value="3 months">3 Months</option>
             <option value="6 months">6 Months</option>
-            <option value="1 year">1 Year</option>
+            {/* <option value="1 year">1 Year</option> */}
           </select>
         </div>
 

@@ -36,7 +36,19 @@ const reviews = [
   {
     name: "Noob6",
     username: "@Noob6",
-    body: "MENA IS THE BEST!!!",
+    body: "CHESS QUEEN NOORA!!!",
+    img: "https://avatar.vercel.sh/james",
+  },
+  {
+    name: "Noob7",
+    username: "@Noob7",
+    body: "CHESS QUEEN NOORA!!!",
+    img: "https://avatar.vercel.sh/james",
+  },
+  {
+    name: "Noob8",
+    username: "@Noob8",
+    body: "CHESS QUEEN NOORA!!!",
     img: "https://avatar.vercel.sh/james",
   },
 ];

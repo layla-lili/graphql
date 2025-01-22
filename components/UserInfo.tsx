@@ -5,8 +5,7 @@ import { useQuery } from "@apollo/client";
 import { USER_INFO } from "@/graphql/queries";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { User, Mail, MapPin, CheckCircle, Star, Award, Key } from "lucide-react";
-import { decodeJwt } from "@/app/ApolloWrapper";
-import Cookies from 'js-cookie';
+
 // Define types for the query response
 interface TransactionAggregate {
   aggregate: {
@@ -36,11 +35,11 @@ interface UserInfoData {
   user: UserType[]; // User details
 }
 
-const UserInfo = () => {
-  const token = Cookies.get('JWT');
-  const decodedToken = token ? decodeJwt(token) : null;
+const UserInfo: React.FC<{ userId: string }> = ({ userId }) => {
+  // const token = Cookies.get('JWT');
+  // const decodedToken = token ? decodeJwt(token) : null;
 
-  const userId = decodedToken ? decodedToken["sub"] : null;
+  // const userId = decodedToken ? decodedToken["sub"] : null;
   const rootEventId = 20;
 
   const { data, loading, error } = useQuery<UserInfoData>(USER_INFO, {
@@ -92,7 +91,7 @@ const UserInfo = () => {
               </div>
               <div className="flex items-center mb-2">
                 <Award className="mr-2" />
-                <span>XP: {xpAmount}</span>
+                <span>XP: {xpAmount} Bytes</span>
               </div>
             </div>
           </CardContent>

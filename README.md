@@ -1,51 +1,56 @@
 # GraphQl
-https://graphql-pearl.vercel.app/login
+# Profile UI with GraphQL Integration
 
-## TODO
- - level and xp (Query).
- - cards add friends.
- - edit progress if applicable.
- - edit skills if nessary.
- - add new graph if quick.
+This project is a web application that displays user school information in a profile UI. The data is fetched from a GraphQL endpoint, and the application uses modern tools and libraries such as Next.js, React, Tailwind CSS, and Apollo Client.
+
+## Table of Contents
+- [GraphQl](#graphql)
+- [Profile UI with GraphQL Integration](#profile-ui-with-graphql-integration)
+  - [Table of Contents](#table-of-contents)
+  - [Project Overview](#project-overview)
+  - [Technologies Used](#technologies-used)
+  - [Features](#features)
+  - [Demo](#demo)
+
+---
+
+## Project Overview
+The goal of this project is to create a profile UI that displays a user's school information. The data is retrieved from a GraphQL API using Apollo Client, and the UI features multiple visualizations, including charts and SVG graphs.
+
+---
+
+## Technologies Used
+- **Frontend Framework**: [Next.js](https://nextjs.org/)
+- **State Management**: Apollo Client
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Language**: TypeScript
+- **Authentication**: Custom login form with authorization
+
+---
+
+## Features
+- User authentication via a GraphQL endpoint.
+- Displays detailed user information, including:
+  - Basic user details
+  - School information
+  - Skills and progress charts
+- Visualizations:
+  - Line charts for progress
+  - Pie charts for skill distribution
+  - success and failure metrics
+- Fully responsive design with mobile-first CSS.
+- Dark mode toggle using a theme provider.
+
+---
+
+## Demo
+
+https://graphql-3uj8.vercel.app/login
 
 
 
 
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 

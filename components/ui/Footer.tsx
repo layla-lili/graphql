@@ -126,19 +126,56 @@ const reviews = [
   {
     name: "Noob21",
     username: "@Noob21",
-    body: "mariam: (صح؟)",
+    body: "mariam-malhawi: (صح؟)",
     img: "https://avatar.vercel.sh/john",
   },
   {
     name: "Noob22",
     username: "@Noob22",
-    body: "mariam: (صح؟)",
+    body: "mariam-malhawi: (صح؟)",
     img: "https://avatar.vercel.sh/john",
   },
   {
     name: "Noob23",
     username: "@Noob23",
-    body: "mariam: (صح؟)",
+    body: "mariam-malhawi: (صح؟)",
+    img: "https://avatar.vercel.sh/john",
+  },
+
+  {
+    name: "Noob24",
+    username: "@Noob24",
+    body: "reemohamed: Dammm!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob25",
+    username: "@Noob25",
+    body: "reemohamed: Dammm!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob26",
+    username: "@Noob26",
+    body: "reemohamed: Dammm!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob27",
+    username: "@Noob27",
+    body: "Akhalid: Capeesh!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob28",
+    username: "@Noob28",
+    body: "Akhalid: Capeesh!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob29",
+    username: "@Noob29",
+    body: "Akhalid: Capeesh!!!",
     img: "https://avatar.vercel.sh/john",
   },
  

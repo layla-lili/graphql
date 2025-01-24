@@ -15,6 +15,7 @@ export const USER_INFO = gql`
       where: {
         userId: { _eq: $userId }
         type: { _eq: "level" }
+        path: { _like: "/bahrain/bh-module%" }
        
       }
     ) { amount }

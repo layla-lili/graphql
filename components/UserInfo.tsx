@@ -40,10 +40,10 @@ const UserInfo: React.FC<{ userId: string }> = ({ userId }) => {
   // const decodedToken = token ? decodeJwt(token) : null;
 
   // const userId = decodedToken ? decodedToken["sub"] : null;
-  const rootEventId = 20;
+ 
 
   const { data, loading, error } = useQuery<UserInfoData>(USER_INFO, {
-    variables: { userId, rootEventId },
+    variables: { userId },
     skip: !userId, // Skip query if userId is not available
   });
 

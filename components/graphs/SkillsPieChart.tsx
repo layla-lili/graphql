@@ -33,7 +33,6 @@ const SkillsPieChart: React.FC = () => {
   const { data, loading, error } = useQuery<{ transaction: Transaction[] }>(SKILLS);
   const [activeSkill, setActiveSkill] = React.useState<string>("");
 
-  console.log("data from SkillsPieChart", data);
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
@@ -42,32 +41,38 @@ const SkillsPieChart: React.FC = () => {
     "#2662d9", "#e23670", "#e88c30", "#af57db", "#2eb88a",
   ];
 
-  // Process data to accumulate skill amounts
+  // Process data to find the maximum amount for each skill
   if (data?.transaction) {
     data.transaction.forEach((transaction) => {
       const skillType = transaction.type;
       const amount = transaction.amount;
 
-      skillSummary[skillType] = (skillSummary[skillType] || 0) + amount;
+      if (!skillSummary[skillType] || skillSummary[skillType] < amount) {
+        skillSummary[skillType] = amount; // Store the maximum amount
+      }
     });
   }
 
-  const totalAmount = Object.values(skillSummary).reduce(
-    (acc, value) => acc + value,
-    0
-  );
-
+  // Prepare top skills based on maximum amounts
   const topSkills = Object.entries(skillSummary)
     .filter(([skill, amount]) => skill && skill.trim() !== "" && amount > 0)
-    .map(([skill, amount], index) => ({
+    .map(([skill, amount]) => ({
       skillName: skill.replace(/^skill_/, "").replace(/_/g, " "),
-      skillRatio: Math.round((amount / totalAmount) * 100),
-      fill: colors[index % colors.length],
+      skillRatio: amount,
     }))
     .sort((a, b) => b.skillRatio - a.skillRatio)
-    .slice(0, 5);
+    .slice(0, 5); // Get only the top 5 skills
 
-  const activeSkillData = topSkills.find(
+  // Assign colors dynamically while avoiding adjacent colors
+  const coloredTopSkills = topSkills.map((entry, index) => {
+    const colorIndex = (index === 0) ? 0 : (index % colors.length);
+    return {
+      ...entry,
+      fill: colors[colorIndex],
+    };
+  });
+
+  const activeSkillData = coloredTopSkills.find(
     (entry) => entry.skillName === activeSkill
   );
 
@@ -81,14 +86,14 @@ const SkillsPieChart: React.FC = () => {
         <CardTitle>Top Skills Pie Chart</CardTitle>
         <CardDescription>Overview of top skills used</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="text-center">
         <div className="mb-4">
           <Select value={activeSkill} onValueChange={setActiveSkill}>
             <SelectTrigger className="ml-auto h-7 w-[130px] rounded-lg pl-2.5" aria-label="Select a skill">
               <SelectValue placeholder="Select skill" />
             </SelectTrigger>
             <SelectContent align="end" className="rounded-xl">
-              {topSkills.map((skill) => (
+              {coloredTopSkills.map((skill) => (
                 <SelectItem key={skill.skillName} value={skill.skillName} className="rounded-lg">
                   <div className="flex items-center gap-2 text-xs">
                     <span className="flex h-3 w-3 shrink-0 rounded-sm" style={{ backgroundColor: skill.fill }} />
@@ -104,14 +109,14 @@ const SkillsPieChart: React.FC = () => {
           <PieChart>
             <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
             <Pie
-              data={topSkills}
+              data={coloredTopSkills}
               dataKey="skillRatio"
               nameKey="skillName"
               innerRadius={50}
               outerRadius={100}
               fill="#8884d8"
               labelLine={false}
-              activeIndex={topSkills.findIndex(skill => skill.skillName === activeSkill)}
+              activeIndex={coloredTopSkills.findIndex(skill => skill.skillName === activeSkill)}
               activeShape={({
                 outerRadius = 0,
                 ...props
@@ -122,7 +127,7 @@ const SkillsPieChart: React.FC = () => {
                 </g>
               )}
             >
-              {topSkills.map((entry, index) => (
+              {coloredTopSkills.map((entry, index) => (
                 <Sector key={`sector-${index}`} {...entry} fill={entry.fill} />
               ))}
               <Label

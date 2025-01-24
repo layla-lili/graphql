@@ -44,7 +44,7 @@ export default function RootLayout({
             <ApolloWrapper>
               <ThemeProvider
                 attribute="class"
-                defaultTheme="system"
+                defaultTheme="dark"
                 enableSystem
                 disableTransitionOnChange
               >
@@ -56,11 +56,16 @@ export default function RootLayout({
               </ThemeProvider>
             </ApolloWrapper>
           ) : (
-            <ThemeProvider>
-            <div className="md:container md:mx-auto">
-              <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+            <ThemeProvider
+                attribute="class"
+                defaultTheme="dark"
+                enableSystem
+                disableTransitionOnChange
+              >
+            <div >
+              {/* <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start"> */}
                 {children}
-              </main>
+              {/* </main> */}
             </div>
             </ThemeProvider>
           )}

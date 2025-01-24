@@ -51,6 +51,97 @@ const reviews = [
     body: "CHESS QUEEN NOORA!!!",
     img: "https://avatar.vercel.sh/james",
   },
+  {
+    name: "Noob9",
+    username: "@Noob9",
+    body: "fatali: SLAAAYYYY!!!",
+    img: "https://avatar.vercel.sh/jack",
+  },
+  {
+    name: "Noob10",
+    username: "@Noob10",
+    body: "fatali: SLAAAYYYY!!!",
+    img: "https://avatar.vercel.sh/jack",
+  },
+  {
+    name: "Noob11",
+    username: "@Noob11",
+    body: "fatali: SLAAAYYYY!!!",
+    img: "https://avatar.vercel.sh/jack",
+  },
+  {
+    name: "Noob12",
+    username: "@Noob12",
+    body: "Eman: GRAPEEEE!!!",
+    img: "https://avatar.vercel.sh/jill",
+  },
+  {
+    name: "Noob13",
+    username: "@Noob13",
+    body: "Eman: GRAPEEEE!!!",
+    img: "https://avatar.vercel.sh/jill",
+  },
+  {
+    name: "Noob14",
+    username: "@Noob14",
+    body: "Eman: GRAPEEEE!!!",
+    img: "https://avatar.vercel.sh/jill",
+  },
+  {
+    name: "Noob15",
+    username: "@Noob15",
+    body: "Hawra: Lets Order Boba!!!",
+    img: "https://avatar.vercel.sh/james",
+  },
+  {
+    name: "Noob16",
+    username: "@Noob16",
+    body: "Hawra: Lets Order Boba!!!",
+    img: "https://avatar.vercel.sh/james",
+  },
+  {
+    name: "Noob17",
+    username: "@Noob17",
+    body: "Hawra: Lets Order Boba!!!",
+    img: "https://avatar.vercel.sh/james",
+  },
+  {
+    name: "Noob18",
+    username: "@Noob18",
+    body: "zhashim: hello Keteki!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob19",
+    username: "@Noob19",
+    body: "zhashim: hello Keteki!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob20",
+    username: "@Noob20",
+    body: "zhashim: hello Keteki!!!",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob21",
+    username: "@Noob21",
+    body: "mariam: (صح؟)",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob22",
+    username: "@Noob22",
+    body: "mariam: (صح؟)",
+    img: "https://avatar.vercel.sh/john",
+  },
+  {
+    name: "Noob23",
+    username: "@Noob23",
+    body: "mariam: (صح؟)",
+    img: "https://avatar.vercel.sh/john",
+  },
+ 
 ];
 
 const firstRow = reviews.slice(0, reviews.length / 2);
@@ -71,9 +162,9 @@ const ReviewCard = ({
     <figure
       className={cn(
         "relative w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
-        // light styles
-        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-        // dark styles
+        // Updated light mode styles
+        "border-gray-950/[.3] bg-gray-950/[.1] hover:bg-gray-950/[.15]",
+        // Updated dark mode styles
         "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
       )}
     >
@@ -81,7 +172,7 @@ const ReviewCard = ({
         <Image className="rounded-full" width={32} height={32} alt="" src={img} />
         <div className="flex flex-col">
           <figcaption className="text-sm font-medium dark:text-white">
-        {name}
+            {name}
           </figcaption>
           <p className="text-xs font-medium dark:text-white/40">{username}</p>
         </div>
@@ -90,6 +181,7 @@ const ReviewCard = ({
     </figure>
   );
 };
+
 
 export function MarqueeDemo() {
   return (

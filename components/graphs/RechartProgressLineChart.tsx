@@ -19,118 +19,88 @@ import {
 } from "@/components/ui/chart";
 
 export function RechartProgressLineChart() {
-
-  const [timeFrame, setTimeFrame] = useState('1 month'); // Default time frame
+  const [timeFrame, setTimeFrame] = useState('3 months'); // Default time frame
 
   // Fetching data
   const { data, loading, error } = useQuery(PROGRESS);
-
-  console.log("data from RechartProgressLineChart", data);
-
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   // Transform the data into chart-friendly format
-  const chartData = data.transaction.map((item: { createdAt: string; amount: number }) => ({
-    createdAt: new Date(item.createdAt), // Convert to Date object
-    progress_count: item.amount, // The value of progress
-    fill: "var(--chart-1)", // Assign a color dynamically if needed
+  const chartData = data.transaction.map((item: { createdAt: string | number | Date; amount: any; object: { name: string; }; }) => ({
+    createdAt: new Date(item.createdAt),
+    progress_count: item.amount,
+    object_name: item.object.name, // Include object name
   }));
+
 
   // Sort the data by date
-  chartData.sort((a: { createdAt: number; }, b: { createdAt: number; }) => a.createdAt - b.createdAt);
+  chartData.sort((a: { createdAt: { getTime: () => number; }; }, b: { createdAt: { getTime: () => number; }; }) => a.createdAt.getTime() - b.createdAt.getTime());
 
-  // Format the createdAt field to Month-Year format (e.g., "Jan 2024")
-  const formattedChartData = chartData.map((item: { createdAt: { 
-    toLocaleString: (arg0: string, arg1: { month: string; year: string; }) => string; }; }) => ({
-    ...item,
-    month: item.createdAt.toLocaleString("default", { month: "short", year: "numeric" }), // "Jan 2024"
-  }));
+  // Function to get last n months
+  const getLastNMonths = (n: number) => {
+    const now = new Date();
+    const months = [];
+    for (let i = 0; i < n; i++) {
+      const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      months.push(month.toLocaleString("default", { month: "short" }));
+    }
+    return months.reverse(); // To get from oldest to newest
+  };
 
-  // Function to filter the data based on the selected time frame
+  // Function to filter data based on the selected time frame
   const filterDataByTimeFrame = (timeFrame: string) => {
     const now = new Date();
-    let startDate;
+    let startDate = new Date();
 
     switch (timeFrame) {
       case '1 week':
-        startDate = new Date();
         startDate.setDate(now.getDate() - 7);
         break;
       case '1 month':
-        startDate = new Date();
         startDate.setMonth(now.getMonth() - 1);
         break;
       case '3 months':
-        startDate = new Date();
         startDate.setMonth(now.getMonth() - 3);
         break;
       case '6 months':
-        startDate = new Date();
         startDate.setMonth(now.getMonth() - 6);
         break;
-      // case '1 year':
-      //   startDate = new Date();
-      //   startDate.setFullYear(now.getFullYear() - 1);
-      //   break;
       default:
         startDate = new Date();
         break;
     }
 
-    return formattedChartData.filter((item: { createdAt: Date; }) => item.createdAt.getTime() >= startDate.getTime());
+    return chartData.filter((item: { createdAt: Date; }) => item.createdAt.getTime() >= startDate.getTime());
   };
 
   // Filter data based on the selected time frame
   const filteredData = filterDataByTimeFrame(timeFrame);
+  const lastNMonths = timeFrame === '1 week' ? 1 : (timeFrame === '1 month' ? 1 : (timeFrame === '3 months' ? 3 : 6));
+  const displayMonths = getLastNMonths(lastNMonths);
 
-  // Generate random color (avoid black and white)
-  const generateRandomColor = () => {
-    const randomColor = () => Math.floor(Math.random() * 256); // Random RGB values
-    let r, g, b;
-
-    do {
-      r = randomColor();
-      g = randomColor();
-      b = randomColor();
-    } while (
-      (r === 0 && g === 0 && b === 0) ||  // Avoid black
-      (r === 255 && g === 255 && b === 255) // Avoid white
+  // Prepare data for display on the chart
+   // Prepare data for display on the chart
+   const displayData = displayMonths.map(month => {
+    const monthData = filteredData.filter((item: { createdAt: { toLocaleString: (arg0: string, arg1: { month: string; }) => string; }; }) => 
+      item.createdAt.toLocaleString("default", { month: "short" }) === month
     );
+    const progressCount = monthData.reduce((acc: any, item: { progress_count: any; }) => acc + item.progress_count, 0);
+    const objectNames = monthData.map((item: { object_name: any; }) => item.object_name).join(", "); // Join object names for tooltip
+    return {
+      month,
+      progress_count: progressCount,
+      object_names: objectNames || "No Object", // Fallback if no objects
+    };
+  });
 
-    return `rgb(${r},${g},${b})`;
-  };
-
-  const chartConfig = {
-    progress_count: {
-      label: "Progress Count",
-      color: "hsl(var(--chart-2))",
-    },
-  } satisfies ChartConfig;
-
-  // Determine the chart title dynamically based on the time frame
-  const getTitle = () => {
-    switch (timeFrame) {
-      case '1 week':
-        return "Progress in Last 1 Week";
-      case '1 month':
-        return "Progress in Last 1 Month";
-      case '3 months':
-        return "Progress in Last 3 Months";
-      case '6 months':
-        return "Progress in Last 6 Months";
-      // case '1 year':
-      //   return "Progress in Last 1 Year";
-      default:
-        return "Progress Chart";
-    }
-  };
+  
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{getTitle()}</CardTitle>
+        <CardTitle>Progress in Last {timeFrame}</CardTitle>
         <CardDescription>Progress over the selected time frame</CardDescription>
       </CardHeader>
       <CardContent>
@@ -146,50 +116,36 @@ export function RechartProgressLineChart() {
             <option value="1 month">1 Month</option>
             <option value="3 months">3 Months</option>
             <option value="6 months">6 Months</option>
-            {/* <option value="1 year">1 Year</option> */}
           </select>
         </div>
-
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={{ /* Add your ChartConfig properties here */ }}>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart
-              data={filteredData}
-              margin={{
-                top: 24,
-                left: 24,
-                right: 24,
-              }}
-            >
+            <LineChart data={displayData} margin={{ top: 24, left: 24, right: 24 }}>
               <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month" // Use the formatted month field as X-axis labels
-                tick={{ fontSize: 12 }}
-                angle={-45} // Rotate labels if necessary
-                textAnchor="end" // Align the labels
-              />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} angle={-45} textAnchor="end" />
               <YAxis />
-              <Tooltip
-                content={<ChartTooltipContent indicator="line" nameKey="month" hideLabel={false} />}
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="custom-tooltip">
+                        <p>{`${payload[0].payload.object_names}`}</p>
+                        <p>{`xp: ${payload[0].payload.progress_count}`}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
               />
               <Line
                 dataKey="progress_count"
-                type="natural"
-                stroke="#4CAF50" // Line color
+                stroke="#4CAF50"
                 strokeWidth={2}
-                dot={({ payload, cx, cy }) => {
-                  const fill = payload.fill || generateRandomColor(); // Apply the random color
-
-                  return (
-                    <Dot
-                      key={payload.createdAt} // Ensure unique key
-                      r={5}
-                      cx={cx}
-                      cy={cy}
-                      fill={fill}  // Apply fill here
-                      stroke={"#4CAF50"} // Ensure stroke is the same color as fill
-                    />
-                  );
-                }}
+                dot={({ payload, cx, cy }) => (
+                  payload.progress_count > 0 ? (
+                    <Dot key={payload.month} r={5} cx={cx} cy={cy} fill="#4CAF50" />
+                  ) : <Dot key={payload.month} r={0} cx={cx} cy={cy} fill="transparent" />
+                )}
               />
             </LineChart>
           </ResponsiveContainer>

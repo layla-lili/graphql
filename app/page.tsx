@@ -36,8 +36,9 @@ export default function Home() {
         </div>
         {/* graphs section */}
         <div className="container grid grid-cols-1 gap-10">
-         <SkillsInfo  />
+       
          <SkillsPieChart  />
+         {/* <SkillsInfo  /> */}
          <SucessFailureRadialStackedChart auditorId={userId} /> 
           <RechartProgressLineChart  />
         

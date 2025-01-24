@@ -38,7 +38,7 @@ const SkillsInfo = () => {
 
   return (
     <div>
-      <h2>Your Skills</h2>
+
       <SkillsBarChart />
     </div>
   );

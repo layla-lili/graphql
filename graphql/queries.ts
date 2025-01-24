@@ -37,6 +37,7 @@ export const SKILLS = gql`
       amount
       type
       objectId
+     
     }
   }
 `;

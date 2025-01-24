@@ -1,7 +1,4 @@
 "use client";
-
-
-import SkillsInfo from "@/components/SkillsInfo";
 import UserInfo from "@/components/UserInfo";
 import SparklesText from "@/components/ui/sparkles-text";
 import { MarqueeDemo } from "@/components/ui/Footer";

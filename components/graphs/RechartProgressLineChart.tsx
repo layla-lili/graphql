@@ -12,36 +12,50 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
+import { ChartContainer } from "@/components/ui/chart";
+
+// Define types for chart data
+interface Transaction {
+  createdAt: string | number | Date;
+  amount: number;
+  object: { name: string };
+}
+
+interface ChartData {
+  createdAt: Date;
+  progress_count: number;
+  object_name: string;
+}
+
+interface DisplayData {
+  month: string;
+  progress_count: number;
+  object_names: string;
+}
 
 export function RechartProgressLineChart() {
   const [timeFrame, setTimeFrame] = useState('3 months'); // Default time frame
 
   // Fetching data
-  const { data, loading, error } = useQuery(PROGRESS);
+  const { data, loading, error } = useQuery<{ transaction: Transaction[] }>(PROGRESS);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
   // Transform the data into chart-friendly format
-  const chartData = data.transaction.map((item: { createdAt: string | number | Date; amount: any; object: { name: string; }; }) => ({
+  const chartData: ChartData[] = data?.transaction.map((item) => ({
     createdAt: new Date(item.createdAt),
     progress_count: item.amount,
     object_name: item.object.name, // Include object name
-  }));
-
+  })) || [];
 
   // Sort the data by date
-  chartData.sort((a: { createdAt: { getTime: () => number; }; }, b: { createdAt: { getTime: () => number; }; }) => a.createdAt.getTime() - b.createdAt.getTime());
+  chartData.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 
   // Function to get last n months
-  const getLastNMonths = (n: number) => {
+  const getLastNMonths = (n: number): string[] => {
     const now = new Date();
-    const months = [];
+    const months: string[] = [];
     for (let i = 0; i < n; i++) {
       const month = new Date(now.getFullYear(), now.getMonth() - i, 1);
       months.push(month.toLocaleString("default", { month: "short" }));
@@ -50,7 +64,7 @@ export function RechartProgressLineChart() {
   };
 
   // Function to filter data based on the selected time frame
-  const filterDataByTimeFrame = (timeFrame: string) => {
+  const filterDataByTimeFrame = (timeFrame: string): ChartData[] => {
     const now = new Date();
     let startDate = new Date();
 
@@ -72,7 +86,7 @@ export function RechartProgressLineChart() {
         break;
     }
 
-    return chartData.filter((item: { createdAt: Date; }) => item.createdAt.getTime() >= startDate.getTime());
+    return chartData.filter(item => item.createdAt.getTime() >= startDate.getTime());
   };
 
   // Filter data based on the selected time frame
@@ -81,21 +95,18 @@ export function RechartProgressLineChart() {
   const displayMonths = getLastNMonths(lastNMonths);
 
   // Prepare data for display on the chart
-   // Prepare data for display on the chart
-   const displayData = displayMonths.map(month => {
-    const monthData = filteredData.filter((item: { createdAt: { toLocaleString: (arg0: string, arg1: { month: string; }) => string; }; }) => 
+  const displayData: DisplayData[] = displayMonths.map(month => {
+    const monthData = filteredData.filter(item => 
       item.createdAt.toLocaleString("default", { month: "short" }) === month
     );
-    const progressCount = monthData.reduce((acc: any, item: { progress_count: any; }) => acc + item.progress_count, 0);
-    const objectNames = monthData.map((item: { object_name: any; }) => item.object_name).join(", "); // Join object names for tooltip
+    const progressCount = monthData.reduce((acc, item) => acc + item.progress_count, 0);
+    const objectNames = monthData.map(item => item.object_name).join(", "); // Join object names for tooltip
     return {
       month,
       progress_count: progressCount,
       object_names: objectNames || "No Object", // Fallback if no objects
     };
   });
-
-  
 
   return (
     <Card>
@@ -118,7 +129,7 @@ export function RechartProgressLineChart() {
             <option value="6 months">6 Months</option>
           </select>
         </div>
-        <ChartContainer config={{ /* Add your ChartConfig properties here */ }}>
+        <ChartContainer config={{ /* Add your chart configuration here */ }}>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={displayData} margin={{ top: 24, left: 24, right: 24 }}>
               <CartesianGrid vertical={false} />

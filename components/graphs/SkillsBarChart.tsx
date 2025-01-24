@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, XAxis, YAxis, Cell, Tooltip, CartesianGrid } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, Cell, Tooltip } from "recharts";
 import {
   Card,
   CardContent,
@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/card";
 import {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import { useQuery } from "@apollo/client";
 import { SKILLS } from "@/graphql/queries";

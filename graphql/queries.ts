@@ -1,12 +1,12 @@
 import { gql } from "@apollo/client";
 
 export const USER_INFO = gql`
- query rootEventDetails($userId: Int!, $rootEventId: Int!) {
+ query rootEventDetails($userId: Int!) {
     xp: transaction_aggregate(
       where: {
         userId: { _eq: $userId }
         type: { _eq: "xp" }
-        eventId: { _eq: $rootEventId }
+       
       }
     ) { aggregate { sum { amount } } }
     level: transaction(
@@ -15,7 +15,7 @@ export const USER_INFO = gql`
       where: {
         userId: { _eq: $userId }
         type: { _eq: "level" }
-        eventId: { _eq: $rootEventId }
+       
       }
     ) { amount }
        user {
